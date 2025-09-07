@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decen Air - Flight Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Header Section -->
+<header>
+    <h1>Welcome to Decen Air</h1>
+    <p>Book your flight in just a few clicks</p>
+</header>
+
+<!-- Search Form -->
+<section class="search-form">
+    <h2>Find Your Flight</h2>
+    <form action="index.php" method="GET">
+        <!-- From Location Dropdown -->
+        <select name="from" required>
+            <option value="" disabled selected>From Location</option>
+            <?php foreach ($locations as $location): ?>
+                <option value="<?= htmlspecialchars($location) ?>" <?= $from == $location ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($location) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <!-- To Location Dropdown -->
+        <select name="to" required>
+            <option value="" disabled selected>To Location</option>
+            <?php foreach ($locations as $location): ?>
+                <option value="<?= htmlspecialchars($location) ?>" <?= $to == $location ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($location) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit">Search Flights</button>
+    </form>
+</section>
+
+<!-- Flight Results -->
+<section class="flight-results">
+    <h2>Available Flights</h2>
+    <?php
+    // Only display results if there are any
+    if (isset($result) && $result->num_rows > 0): ?>
+        <div class="flight-cards">
+            <?php while($row = $result->fetch_assoc()): ?>
+                <div class="flight-card">
+                    <div class="boarding-pass">
+                        <div class="flight-header">
+                            <h3>Flight Number: <?= htmlspecialchars($row['flight_number']) ?></h3>
+                        </div>
+                        <div class="flight-details">
+                            <div class="flight-route">
+                                <p><strong>From:</strong> <?= htmlspecialchars($row['from_location']) ?></p>
+                                <p><strong>To:</strong> <?= htmlspecialchars($row['to_location']) ?></p>
+                            </div>
+                            <div class="flight-times">
+                                <p><strong>Departure:</strong> <?= htmlspecialchars($row['departure_time']) ?></p>
+                                <p><strong>Arrival:</strong> <?= htmlspecialchars($row['arrival_time']) ?></p>
+                            </div>
+                            <div class="flight-price">
+                                <p><strong>Price:</strong> $<?= number_format($row['price'], 2) ?></p>
+                            </div>
+                            <a href="book.php?flight_id=<?= $row['id'] ?>" class="book-now">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
+    <?php else: ?>
+        <p>No flights found for your search. Please try again with different locations.</p>
+    <?php endif; ?>
+</section>
+
+<!-- Footer Section -->
+<footer>
+    <p>&copy; 2024 Decen Air. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
